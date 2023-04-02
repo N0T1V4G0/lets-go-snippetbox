@@ -20,6 +20,12 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		// Header().Set() must be called before WriteHeader and Write
+		w.Header().Set("Allow", http.MethodPost)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	w.Write([]byte("Creating a snippet..."))
 }
 
@@ -29,8 +35,8 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
 
-	fmt.Println("Starting app on port 3000")
+	fmt.Println("Starting app on port 4000")
 	// ListenAndServe always return non-nil err
-	err := http.ListenAndServe(":3000", mux)
+	err := http.ListenAndServe(":4000", mux)
 	log.Fatal(err)
 }
