@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,8 @@ type application struct {
 }
 
 func main() {
+	addr := flag.String("addr", ":4000", "HTTP network address")
+
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
@@ -22,12 +25,12 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:     ":4000",
+		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
 	}
 
-	infoLog.Println("Starting app on port 4000")
+	infoLog.Println("Starting app on addr " + *addr)
 	// ListenAndServe always return non-nil err
 	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
